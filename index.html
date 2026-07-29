@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rimsha Razi | Cybersecurity Portfolio & Threat Detection</title>
+  
+  <!-- PyScript for Browser-Based Python Execution -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2024.1.1/core.mjs"></script>
+
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #151c2c;
+      --border: #232d42;
+      --accent: #38bdf8;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --alert: #ef4444;
+      --success: #22c55e;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 1.5rem;
+      line-height: 1.6;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    h1 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2rem; }
+    .tagline { color: var(--accent); font-weight: 600; font-size: 1.1rem; margin-bottom: 1rem; }
+    .bio { color: var(--text-muted); font-size: 1rem; }
+    
+    .badge-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+    .badge {
+      background: #1e293b;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    h2 { color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-top: 0; }
+    h3 { color: var(--accent); margin-top: 0; }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: #070a11;
+      color: #34d399;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.8rem;
+      font-family: monospace;
+      box-sizing: border-box;
+      font-size: 0.85rem;
+    }
+    button {
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: opacity 0.2s;
+    }
+    button:hover { opacity: 0.9; }
+
+    #output {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #070a11;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-family: monospace;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+    .alert-text { color: var(--alert); font-weight: bold; }
+    .clean-text { color: var(--success); font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER / BIO SECTION -->
+    <header>
+      <h1>Rimsha Razi</h1>
+      <div class="tagline">Cybersecurity Technology & Security Operations | Threat Detection</div>
+      <p class="bio">
+        🎯 Graduate in Cybersecurity Technology with a background in Aviation Management — combining analytical precision, operational rigor, and hands-on threat hunting. Focused on SOC operations, SIEM analysis, and Python automation.
+      </p>
+      <div class="badge-group">
+        <span class="badge">Security Operations (SOC)</span>
+        <span class="badge">MITRE ATT&CK Mapping</span>
+        <span class="badge">Log Analysis & SIEM</span>
+        <span class="badge">Python Automation</span>
+        <span class="badge">Threat Detection</span>
+      </div>
+    </header>
+
+    <!-- LIVE INTERACTIVE PYTHON TOOL -->
+    <section class="card">
+      <h2>🛡️ Live Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
+      <p>This tool runs <strong>live Python logic directly inside your browser</strong>. It parses SSH authentication logs and detects brute-force/password spraying attacks (mapped to <strong>MITRE ATT&CK T1110</strong>).</p>
+
+      <label for="log-input"><strong>Raw Auth Log Stream:</strong></label>
+      <textarea id="log-input">2026-07-29T10:14:02Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
+2026-07-29T10:14:05Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
+2026-07-29T10:14:12Z host=DC01 app=sshd status=FAILED user=root src_ip=192.168.1.105
+2026-07-29T10:14:18Z host=DC01 app=sshd status=FAILED user=service_account src_ip=192.168.1.105
+2026-07-29T10:14:22Z host=DC01 app=sshd status=FAILED user=rrazi src_ip=192.168.1.105
+2026-07-29T10:14:25Z host=DC01 app=sshd status=SUCCESS user=rrazi src_ip=192.168.1.105
+2026-07-29T10:15:01Z host=DC01 app=sshd status=FAILED user=guest src_ip=10.0.0.42</textarea>
+
+      <button py-click="run_detection">Run Python Detection Engine</button>
+
+      <div id="output">Click the button above to execute Python detection engine...</div>
+
+      <!-- BROWSER PYTHON EXECUTION -->
+      <script type="py">
+        import re
+        from collections import defaultdict
+        from pyscript import document
+
+        def run_detection(event):
+            log_data = document.getElementById("log-input").value
+            out_div = document.getElementById("output")
+            
+            pattern = r"status=(?P<status>\w+) user=(?P<user>\S+) src_ip=(?P<src_ip>[\d\.]+)"
+            failed_attempts = defaultdict(list)
+
+            for line in log_data.strip().split("\n"):
+                match = re.search(pattern, line)
+                if match:
+                    status = match.group("status")
+                    user = match.group("user")
+                    ip = match.group("src_ip")
+                    if status == "FAILED":
+                        failed_attempts[ip].append(user)
+
+            output_text = "=== SOC DETECTION RESULTS ===\n"
+            alerts_found = False
+
+            for ip, users in failed_attempts.items():
+                if len(users) >= 4:
+                    alerts_found = True
+                    output_text += f"\n🚨 [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
+                    output_text += f" ├─ Attacker IP     : {ip}\n"
+                    output_text += f" ├─ Failed Logins   : {len(users)} attempts\n"
+                    output_text += f" ├─ Targeted Users  : {', '.join(set(users))}\n"
+                    output_text += f" └─ MITRE ATT&CK ID : T1110.003\n"
+
+            if not alerts_found:
+                output_text += "\n✅ NO THREAT DETECTED: Failed logins remain under threshold."
+
+            out_div.innerText = output_text
+      </script>
+    </section>
+
+    <!-- LAB PROJECTS SECTION -->
+    <section class="card">
+      <h2>🔬 Hands-On Cyber Security Labs</h2>
+
+      <h3>1. Security Operations & Threat Detection (Wazuh + pfSense)</h3>
+      <p>Configured an enterprise SIEM environment in a virtualized home lab. Injected simulated network attacks, monitored endpoint telemetry, created custom detection rules, and generated incident response writeups.</p>
+
+      <h3>2. Automated Threat Intelligence & Beacon Detection</h3>
+      <p>Developed Python scripts to calculate connection variance across network logs to flag potential C2 (Command & Control) beaconing activity (MITRE T1071).</p>
+    </section>
+
+  </div>
+
+</body>
+</html>
