@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rimsha Razi | Cybersecurity Portfolio & Threat Detection</title>
+  <title>Rimsha Razi | Cybersecurity & SOC Analyst Portfolio</title>
   
   <!-- PyScript for Browser-Based Python Execution -->
   <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
@@ -29,6 +29,23 @@
       line-height: 1.6;
     }
     .container { max-width: 900px; margin: 0 auto; }
+    
+    /* Navigation Bar */
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    nav a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    nav a:hover { text-decoration: underline; }
+
     header {
       background: var(--card);
       border: 1px solid var(--border);
@@ -36,7 +53,7 @@
       padding: 2rem;
       margin-bottom: 2rem;
     }
-    h1 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2rem; }
+    h1 { margin: 0 0 0.5rem 0; color: #fff; font-size: 2.2rem; }
     .tagline { color: var(--accent); font-weight: 600; font-size: 1.1rem; margin-bottom: 1rem; }
     .bio { color: var(--text-muted); font-size: 1rem; }
     
@@ -96,34 +113,55 @@
       white-space: pre-wrap;
       font-size: 0.9rem;
     }
-    .alert-text { color: var(--alert); font-weight: bold; }
-    .clean-text { color: var(--success); font-weight: bold; }
+
+    /* Lab Grid */
+    .lab-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .lab-item {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      border-radius: 8px;
+    }
+    .lab-title { color: #fff; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .lab-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1rem; }
+    .tech-stack { color: var(--accent); font-size: 0.85rem; font-weight: 500; }
   </style>
 </head>
 <body>
 
   <div class="container">
     
+    <nav>
+      <a href="#about">About</a>
+      <a href="#interactive-tool">Live Python Engine</a>
+      <a href="#labs">Home Labs</a>
+      <a href="#tools">Tools & Skills</a>
+    </nav>
+
     <!-- HEADER / BIO SECTION -->
-    <header>
+    <header id="about">
       <h1>Rimsha Razi</h1>
-      <div class="tagline">Cybersecurity Technology & Security Operations | Threat Detection</div>
+      <div class="tagline">Security Operations Center (SOC) Analyst | Threat Detection & Incident Response</div>
       <p class="bio">
-         Graduate in Cybersecurity Technology with a background in Aviation Management — combining analytical precision, operational rigor, and hands-on threat hunting. Focused on SOC operations, SIEM analysis, and Python automation.
+        🎯 Graduate in Cybersecurity Technology with a background in Aviation Management — combining analytical precision, systematic threat investigation, and hands-on log analysis. Specialized in SIEM telemetry monitoring, MITRE ATT&CK framework mapping, and Python automation.
       </p>
       <div class="badge-group">
         <span class="badge">Security Operations (SOC)</span>
         <span class="badge">MITRE ATT&CK Mapping</span>
         <span class="badge">Log Analysis & SIEM</span>
-        <span class="badge">Python Automation</span>
+        <span class="badge">Python Security Automation</span>
         <span class="badge">Threat Detection</span>
       </div>
     </header>
 
     <!-- LIVE INTERACTIVE PYTHON TOOL -->
-    <section class="card">
-      <h2> Live Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
-      <p>This tool runs <strong>live Python logic directly inside your browser</strong>. It parses SSH authentication logs and detects brute-force/password spraying attacks (mapped to <strong>MITRE ATT&CK T1110</strong>).</p>
+    <section id="interactive-tool" class="card">
+      <h2>🛡️ Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
+      <p>This tool executes <strong>live Python detection logic inside your browser</strong>. It parses SSH authentication logs to detect brute-force and password spraying attacks mapped to <strong>MITRE ATT&CK T1110</strong>.</p>
 
       <label for="log-input"><strong>Raw Auth Log Stream:</strong></label>
       <textarea id="log-input">2026-07-29T10:14:02Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
@@ -166,7 +204,7 @@
             for ip, users in failed_attempts.items():
                 if len(users) >= 4:
                     alerts_found = True
-                    output_text += f"\n [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
+                    output_text += f"\n🚨 [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
                     output_text += f" ├─ Attacker IP     : {ip}\n"
                     output_text += f" ├─ Failed Logins   : {len(users)} attempts\n"
                     output_text += f" ├─ Targeted Users  : {', '.join(set(users))}\n"
@@ -180,14 +218,37 @@
     </section>
 
     <!-- LAB PROJECTS SECTION -->
-    <section class="card">
-      <h2>Hands-On Cyber Security Labs</h2>
+    <section id="labs" class="card">
+      <h2>🔬 Cybersecurity Home Lab Projects</h2>
 
-      <h3>1. Security Operations & Threat Detection (Wazuh + pfSense)</h3>
-      <p>Configured an enterprise SIEM environment in a virtualized home lab. Injected simulated network attacks, monitored endpoint telemetry, created custom detection rules, and generated incident response writeups.</p>
+      <div class="lab-grid">
+        <div class="lab-item">
+          <div class="lab-title">1. SIEM Log Telemetry & Endpoint Monitoring (Wazuh + pfSense)</div>
+          <div class="lab-desc">
+            Architected a virtualized security home lab utilizing pfSense firewall rules and Wazuh SIEM agents across Windows and Linux endpoints. Simulated lateral movement and brute-force attacks to create custom XML detection rules and generate alert dashboards.
+          </div>
+          <div class="tech-stack">Key Skills: Wazuh SIEM, pfSense, Sysmon, Custom Detection Rules, Windows Event Logs</div>
+        </div>
 
-      <h3>2. Automated Threat Intelligence & Beacon Detection</h3>
-      <p>Developed Python scripts to calculate connection variance across network logs to flag potential C2 (Command & Control) beaconing activity (MITRE T1071).</p>
+        <div class="lab-item">
+          <div class="lab-title">2. Automated Threat Intelligence & Beaconing Detection</div>
+          <div class="lab-desc">
+            Developed custom Python scripts to parse NetFlow and network connection logs. Calculated mathematical variance across outbound connection timestamps to flag automated C2 (Command and Control) beaconing activity mapped to MITRE ATT&CK T1071.
+          </div>
+          <div class="tech-stack">Key Skills: Python, Threat Hunting, Network Telemetry Analysis, MITRE ATT&CK</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECHNICAL SKILLS SECTION -->
+    <section id="tools" class="card">
+      <h2>🛠️ Technical Tooling & Core Competencies</h2>
+      <ul style="padding-left: 1.2rem; color: var(--text-muted);">
+        <li><strong style="color:#fff;">SIEM & Log Analysis:</strong> Wazuh, Splunk, Elastic Stack, Windows Event Viewer, Sysmon</li>
+        <li><strong style="color:#fff;">Network Security & Packet Analysis:</strong> Wireshark, Nmap, pfSense, TCP/IP Suite, NetFlow</li>
+        <li><strong style="color:#fff;">Scripting & Automation:</strong> Python (Regex, Log Parsing, Automation), Bash Scripting</li>
+        <li><strong style="color:#fff;">Frameworks & Methodologies:</strong> MITRE ATT&CK Framework, Cyber Kill Chain, NIST SP 800-61</li>
+      </ul>
     </section>
 
   </div>
