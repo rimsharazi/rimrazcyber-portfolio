@@ -76,7 +76,6 @@
       margin-bottom: 2rem;
     }
     h2 { color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-top: 0; }
-    h3 { color: var(--accent); margin-top: 0; }
 
     textarea {
       width: 100%;
@@ -147,7 +146,7 @@
       <h1>Rimsha Razi</h1>
       <div class="tagline">Security Operations Center (SOC) Analyst | Threat Detection & Incident Response</div>
       <p class="bio">
-        🎯 Graduate in Cybersecurity Technology with a background in Aviation Management — combining analytical precision, systematic threat investigation, and hands-on log analysis. Specialized in SIEM telemetry monitoring, MITRE ATT&CK framework mapping, and Python automation.
+         Cybersecurity specialist focused on threat detection, systematic log analysis, and automated incident response. Specialized in SIEM telemetry monitoring, MITRE ATT&CK framework mapping, and Python security scripts.
       </p>
       <div class="badge-group">
         <span class="badge">Security Operations (SOC)</span>
@@ -160,8 +159,8 @@
 
     <!-- LIVE INTERACTIVE PYTHON TOOL -->
     <section id="interactive-tool" class="card">
-      <h2>🛡️ Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
-      <p>This tool executes <strong>live Python detection logic inside your browser</strong>. It parses SSH authentication logs to detect brute-force and password spraying attacks mapped to <strong>MITRE ATT&CK T1110</strong>.</p>
+      <h2> Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
+      <p>This tool executes <strong>live Python detection logic inside your browser</strong> using PyScript. It parses SSH authentication logs to detect brute-force and password spraying attacks mapped to <strong>MITRE ATT&CK T1110</strong>.</p>
 
       <label for="log-input"><strong>Raw Auth Log Stream:</strong></label>
       <textarea id="log-input">2026-07-29T10:14:02Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
@@ -172,7 +171,7 @@
 2026-07-29T10:14:25Z host=DC01 app=sshd status=SUCCESS user=rrazi src_ip=192.168.1.105
 2026-07-29T10:15:01Z host=DC01 app=sshd status=FAILED user=guest src_ip=10.0.0.42</textarea>
 
-      <button py-click="run_detection">Run Python Detection Engine</button>
+      <button id="run-btn">Run Python Detection Engine</button>
 
       <div id="output">Click the button above to execute Python detection engine...</div>
 
@@ -180,8 +179,9 @@
       <script type="py">
         import re
         from collections import defaultdict
-        from pyscript import document
+        from pyscript import document, when
 
+        @when("click", "#run-btn")
         def run_detection(event):
             log_data = document.getElementById("log-input").value
             out_div = document.getElementById("output")
@@ -204,14 +204,14 @@
             for ip, users in failed_attempts.items():
                 if len(users) >= 4:
                     alerts_found = True
-                    output_text += f"\n🚨 [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
+                    output_text += f"\n [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
                     output_text += f" ├─ Attacker IP     : {ip}\n"
                     output_text += f" ├─ Failed Logins   : {len(users)} attempts\n"
                     output_text += f" ├─ Targeted Users  : {', '.join(set(users))}\n"
                     output_text += f" └─ MITRE ATT&CK ID : T1110.003\n"
 
             if not alerts_found:
-                output_text += "\n✅ NO THREAT DETECTED: Failed logins remain under threshold."
+                output_text += "\n NO THREAT DETECTED: Failed logins remain under threshold."
 
             out_div.innerText = output_text
       </script>
@@ -219,7 +219,7 @@
 
     <!-- LAB PROJECTS SECTION -->
     <section id="labs" class="card">
-      <h2>🔬 Cybersecurity Home Lab Projects</h2>
+      <h2> Cybersecurity Home Lab Projects</h2>
 
       <div class="lab-grid">
         <div class="lab-item">
@@ -242,7 +242,7 @@
 
     <!-- TECHNICAL SKILLS SECTION -->
     <section id="tools" class="card">
-      <h2>🛠️ Technical Tooling & Core Competencies</h2>
+      <h2> Technical Tooling & Core Competencies</h2>
       <ul style="padding-left: 1.2rem; color: var(--text-muted);">
         <li><strong style="color:#fff;">SIEM & Log Analysis:</strong> Wazuh, Splunk, Elastic Stack, Windows Event Viewer, Sysmon</li>
         <li><strong style="color:#fff;">Network Security & Packet Analysis:</strong> Wireshark, Nmap, pfSense, TCP/IP Suite, NetFlow</li>
