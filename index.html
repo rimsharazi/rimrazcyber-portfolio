@@ -164,7 +164,7 @@
   <!-- EMBEDDED TECHNICAL DOCUMENT PREVIEW -->
 <div style="margin-bottom: 1.5rem; background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-    <span style="color: #fff; font-weight: 600; font-size: 0.95rem;">📄 Technical Architecture & Specification Document</span>
+    <span style="color: #fff; font-weight: 600; font-size: 0.95rem;">Technical Architecture & Specification Document</span>
     <a href="./SIEM_Detection_Engine_Technical_Doc.pdf" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
       ↗ Open PDF in New Tab
     </a>
@@ -235,6 +235,56 @@ def run_detection(event=None):
 
     out_div.innerText = output_text
   </script>
+  <div class="card">
+  <h2>Automatic Log File Scanner</h2>
+  <p>Drop your local syslog or auth log file below for instant detection:</p>
+  
+  <input type="file" id="log-file-input" accept=".log,.txt,.csv" style="margin-bottom: 1rem; color: #38bdf8;" />
+  
+  <div id="output">Upload or drop a log file above to run automatic analysis...</div>
+</div>
+
+<script type="py">
+from pyscript import document, window
+from pyodide.ffi import create_proxy
+import re
+from collections import defaultdict
+
+async def process_file(event):
+    file_list = event.target.files
+    if not file_list.length:
+        return
+    
+    file = file_list.item(0)
+    log_data = await file.text()
+    
+    # Run Detection Logic Automatically
+    pattern = r"status=(?P<status>\w+) user=(?P<user>\S+) src_ip=(?P<src_ip>[\d\.]+)"
+    failed_attempts = defaultdict(list)
+
+    for line in log_data.split("\n"):
+        match = re.search(pattern, line)
+        if match and match.group("status") == "FAILED":
+            failed_attempts[match.group("src_ip")].append(match.group("user"))
+
+    out_div = document.getElementById("output")
+    output_text = f"=== AUTOMATIC SCAN RESULTS FOR: {file.name} ===\n"
+    
+    alerts_found = False
+    for ip, users in failed_attempts.items():
+        if len(users) >= 4:
+            alerts_found = True
+            output_text += f"\n [ALERT - HIGH] Brute Force Detected from {ip} ({len(users)} failed attempts)\n"
+
+    if not alerts_found:
+        output_text += "\nNO THREATS DETECTED in uploaded log file."
+
+    out_div.innerText = output_text
+
+# Attach automatic change listener to file input
+file_input = document.getElementById("log-file-input")
+file_input.addEventListener("change", create_proxy(process_file))
+</script>
 </section>
 
     <!-- LAB PROJECTS SECTION -->
