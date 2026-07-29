@@ -6,8 +6,9 @@
   <title>Rimsha Razi | Cybersecurity & SOC Analyst Portfolio</title>
   
   <!-- PyScript for Browser-Based Python Execution -->
-  <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
-  <script type="module" src="https://pyscript.net/releases/2024.1.1/core.mjs"></script>
+  <!-- PyScript CSS & JS for PyScript 2024.1.1 -->
+<link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+<script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
 
   <style>
     :root {
@@ -158,12 +159,31 @@
     </header>
 
     <!-- LIVE INTERACTIVE PYTHON TOOL -->
-    <section id="interactive-tool" class="card">
-      <h2> Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
-      <p>This tool executes <strong>live Python detection logic inside your browser</strong> using PyScript. It parses SSH authentication logs to detect brute-force and password spraying attacks mapped to <strong>MITRE ATT&CK T1110</strong>.</p>
+<section id="interactive-tool" class="card">
+  <h2> Interactive Tool: SIEM Log Parser & Brute-Force Detector</h2>
+  <!-- EMBEDDED TECHNICAL DOCUMENT PREVIEW -->
+<div style="margin-bottom: 1.5rem; background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 1rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+    <span style="color: #fff; font-weight: 600; font-size: 0.95rem;">📄 Technical Architecture & Specification Document</span>
+    <a href="./SIEM_Detection_Engine_Technical_Doc.pdf" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+      ↗ Open PDF in New Tab
+    </a>
+  </div>
+  
+  <!-- Embedded PDF Viewer -->
+  <iframe 
+    src="./SIEM_Detection_Engine_Technical_Doc.pdf" 
+    width="100%" 
+    height="500px" 
+    style="border: 1px solid var(--border); border-radius: 6px; background: #1e293b;"
+    title="Technical Architecture Document Preview">
+    <p>Your browser does not support PDF previews. <a href="SIEM_Detection_Engine_Technical_Doc.pdf">Click here to download the PDF.</a></p>
+  </iframe>
+  </div>
+  <p>This tool executes <strong>live Python detection logic inside your browser</strong> using PyScript. It parses SSH authentication logs to detect brute-force and password spraying attacks mapped to <strong>MITRE ATT&CK T1110</strong>.</p>
 
-      <label for="log-input"><strong>Raw Auth Log Stream:</strong></label>
-      <textarea id="log-input">2026-07-29T10:14:02Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
+  <label for="log-input"><strong>Raw Auth Log Stream:</strong></label>
+  <textarea id="log-input">2026-07-29T10:14:02Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
 2026-07-29T10:14:05Z host=DC01 app=sshd status=FAILED user=admin src_ip=192.168.1.105
 2026-07-29T10:14:12Z host=DC01 app=sshd status=FAILED user=root src_ip=192.168.1.105
 2026-07-29T10:14:18Z host=DC01 app=sshd status=FAILED user=service_account src_ip=192.168.1.105
@@ -171,51 +191,51 @@
 2026-07-29T10:14:25Z host=DC01 app=sshd status=SUCCESS user=rrazi src_ip=192.168.1.105
 2026-07-29T10:15:01Z host=DC01 app=sshd status=FAILED user=guest src_ip=10.0.0.42</textarea>
 
-      <button id="run-btn">Run Python Detection Engine</button>
+  <!-- Clean py-click event trigger -->
+  <button id="run-btn" py-click="run_detection">Run Python Detection Engine</button>
 
-      <div id="output">Click the button above to execute Python detection engine...</div>
+  <div id="output">Click the button above to execute Python detection engine...</div>
 
-      <!-- BROWSER PYTHON EXECUTION -->
-      <script type="py">
-        import re
-        from collections import defaultdict
-        from pyscript import document, when
+  <!-- PYTHON EXECUTION ENGINE (Using standard Pyodide script type) -->
+  <script type="py">
+import re
+from collections import defaultdict
+from pyscript import document
 
-        @when("click", "#run-btn")
-        def run_detection(event):
-            log_data = document.getElementById("log-input").value
-            out_div = document.getElementById("output")
-            
-            pattern = r"status=(?P<status>\w+) user=(?P<user>\S+) src_ip=(?P<src_ip>[\d\.]+)"
-            failed_attempts = defaultdict(list)
+def run_detection(event=None):
+    log_data = document.getElementById("log-input").value
+    out_div = document.getElementById("output")
+    
+    pattern = r"status=(?P<status>\w+) user=(?P<user>\S+) src_ip=(?P<src_ip>[\d\.]+)"
+    failed_attempts = defaultdict(list)
 
-            for line in log_data.strip().split("\n"):
-                match = re.search(pattern, line)
-                if match:
-                    status = match.group("status")
-                    user = match.group("user")
-                    ip = match.group("src_ip")
-                    if status == "FAILED":
-                        failed_attempts[ip].append(user)
+    for line in log_data.strip().split("\n"):
+        match = re.search(pattern, line)
+        if match:
+            status = match.group("status")
+            user = match.group("user")
+            ip = match.group("src_ip")
+            if status == "FAILED":
+                failed_attempts[ip].append(user)
 
-            output_text = "=== SOC DETECTION RESULTS ===\n"
-            alerts_found = False
+    output_text = "=== SOC DETECTION RESULTS ===\n"
+    alerts_found = False
 
-            for ip, users in failed_attempts.items():
-                if len(users) >= 4:
-                    alerts_found = True
-                    output_text += f"\n [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
-                    output_text += f" ├─ Attacker IP     : {ip}\n"
-                    output_text += f" ├─ Failed Logins   : {len(users)} attempts\n"
-                    output_text += f" ├─ Targeted Users  : {', '.join(set(users))}\n"
-                    output_text += f" └─ MITRE ATT&CK ID : T1110.003\n"
+    for ip, users in failed_attempts.items():
+        if len(users) >= 4:
+            alerts_found = True
+            output_text += f"\n [ALERT - HIGH] Password Spraying / Brute Force Detected!\n"
+            output_text += f" ├─ Attacker IP     : {ip}\n"
+            output_text += f" ├─ Failed Logins   : {len(users)} attempts\n"
+            output_text += f" ├─ Targeted Users  : {', '.join(set(users))}\n"
+            output_text += f" └─ MITRE ATT&CK ID : T1110.003\n"
 
-            if not alerts_found:
-                output_text += "\n NO THREAT DETECTED: Failed logins remain under threshold."
+    if not alerts_found:
+        output_text += "\n NO THREAT DETECTED: Failed logins remain under threshold."
 
-            out_div.innerText = output_text
-      </script>
-    </section>
+    out_div.innerText = output_text
+  </script>
+</section>
 
     <!-- LAB PROJECTS SECTION -->
     <section id="labs" class="card">
